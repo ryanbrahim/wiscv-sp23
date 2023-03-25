@@ -56,21 +56,23 @@ my @one_op_inst = ("addi",
                    "slli",
                 #   "rori",
                    "srli",
-                   "srai",
+                   "srai"
+		#   "auipc",
+		# "lui"
                 #   "st",
                 #   "ld",
                 #   "stu", 
                 #   "lbi",
                 #   "slbi",
                 #   "btr",
-                    "lb",
-                    "lh",
-                    "lw",
-                    "lbu",     #TODO : Need to remove these??
-                    "lhu",
-                    "sb",
-                    "sh",
-                    "sw"
+		#    "lb",
+		#    "lh",
+		#    "lw",
+		#    "lbu",     #TODO : Need to remove these??
+		#    "lhu",
+	#	    "sb",
+	#            "sh",
+	#    "sw"
                 );
 
 my @zero_op_inst = ("lbi",
@@ -84,20 +86,20 @@ my @cond_branches = (#"beqz",
                      "bge",
                      "bltu", 
                      "bgeu"
-                    # "bnez",
+ 		     # "bnez",
                     # "bltz",
                     # "bgez"
                      );
 
-my @other_ops =  (#"j",
+my @other_ops =  (            # Do not change the order
                   "jal",
-                  "lui",
-                  "auipc",
-                 # "jr",
-                  "jalr",
-                 # "halt",
-                  "nop");
-
+		  "lui",
+		  "auipc"
+		  # "jalr",
+                  );
+my @special_ops = (
+	          "jalr"
+		  );
 my @load_inst = ("lb",
 	         "lw",
 		 "lh",
@@ -109,6 +111,7 @@ my @store_inst = ("sw"
 		# "sb"
 	         );
 		 
+open (TL, ">random_test.tl");
 
 
 if ($oneprogram) {
@@ -122,9 +125,10 @@ if ($oneprogram) {
 } else {
   gen_prog_per_inst();
   gen_more_memory_tests();
-  gen_more_ctrl_tests();
+  #gen_more_ctrl_tests();
 }
 
+close TL;
 
 sub check_sanity() {
   if ($help) {
@@ -132,7 +136,7 @@ sub check_sanity() {
     exit 0;
   }
   if (!$oprefix) {
-    $oprefix = "t_";
+    $oprefix = "test_";
   }
   if ($seed) {
     srand($seed);
@@ -175,6 +179,8 @@ sub gen_one_control_prog() {
   push @prog_insts, @insts0;
   push @prog_insts, @insts1;
   #  push @prog_insts, "halt";
+  push @prog_insts, "j exit";
+  push @prog_insts, "\nexit:";
   push @prog_insts, "li a7, 93";   
   push @prog_insts, "ecall";       
 
@@ -240,6 +246,8 @@ sub gen_one_memory_prog() {
   }
 
   #  push @prog_insts, "halt";
+   push @prog_insts, "j exit";
+   push @prog_insts, "\nexit:";
    push @prog_insts, "li a7, 93";
    push @prog_insts, "ecall";  
   
@@ -327,6 +335,8 @@ sub gen_more_ctrl_tests()  {
    for ($i = 0; $i < 10; $i++) {
        push @prog_insts, &gen_random_control_tests();
    }
+   push @prog_insts, "j exit";
+   push @prog_insts, "\nexit:";
    push @prog_insts, "li a7, 93";
    push @prog_insts, "ecall";
    my $fname = write_program(\@prog_insts, "more_ctrl");
@@ -337,11 +347,11 @@ sub gen_more_ctrl_tests()  {
 sub gen_random_control_tests() {
     my @insts;
     push @insts, gen_simple_cond_branch(&random_op( \@cond_branches), 1);
-    push @insts, gen_jump(1);
+    push @insts, gen_jump_new(1,1);
     push @insts, gen_load(2);
-    push @insts, gen_jump(1);
+    push @insts, gen_jump_new(1,1);
     push @insts, gen_store(2);
-    push @insts, gen_jump(1);
+    push @insts, gen_jump_new(1,1);
     return @insts;
 }
 
@@ -379,6 +389,8 @@ sub gen_one_prog() {
   push @prog_insts, @insts0;
   push @prog_insts, @insts1;
   #  push @prog_insts, "halt";
+   push @prog_insts, "j exit";
+   push @prog_insts, "\nexit:";
    push @prog_insts, "li a7, 93";
    push @prog_insts, "ecall";  
     
@@ -397,6 +409,8 @@ sub gen_prog_per_inst() {
     push @prog_insts, @insts0;
     push @prog_insts, @insts1;
     #    push @prog_insts, "halt";
+   push @prog_insts, "j exit";
+   push @prog_insts, "\nexit:";
    push @prog_insts, "li a7, 93";
    push @prog_insts, "ecall";  
     
@@ -411,6 +425,8 @@ sub gen_prog_per_inst() {
     push @prog_insts, @insts0;
     push @prog_insts, @insts1;
     #    push @prog_insts, "halt";
+   push @prog_insts, "j exit";
+   push @prog_insts, "\nexit:";
    push @prog_insts, "li a7, 93";
    push @prog_insts, "ecall";  
     
@@ -421,10 +437,12 @@ sub gen_prog_per_inst() {
 
   foreach my $a (@cond_branches) {
     my @insts0 = fill_all_regs();
-    my @insts1 = gen_simple_cond_branch($a, 16);
+    my @insts1 = gen_simple_cond_branch_new($a, 16);
     push @prog_insts, @insts0;
     push @prog_insts, @insts1;
     #    push @prog_insts, "halt";
+   push @prog_insts, "j exit";
+   push @prog_insts, "\nexit:";
    push @prog_insts, "li a7, 93";
    push @prog_insts, "ecall";  
     
@@ -432,16 +450,36 @@ sub gen_prog_per_inst() {
     print "Wrote $fname\n";
     $#prog_insts = -1;
   }
+  
+  foreach my $a (@special_ops){
+    my @insts0 = fill_all_regs();
+    my @insts1 = gen_jalr();
+    push @prog_insts, @insts0;
+    push @prog_insts, @insts1;
+    push @prog_insts, "j exit";
+    push @prog_insts, "\nexit:";
+    push @prog_insts, "li a7, 93";
+    push @prog_insts, "ecall";
+    my $fname = write_program(\@prog_insts, $a);
+    print "Wrote $fname\n";
+    $#prog_insts = -1;
+  }
+
+
 
   # jumps
   for (my $i = 0; $i <= 3; $i++) {
-    my @insts1 = gen_jump(16, $i);
+    my $opname = $other_ops[$i];
+    my @insts0 = fill_all_regs();
+    my @insts1 = gen_jump_new($i,16);
+    push @prog_insts, @insts0;
     push @prog_insts, @insts1;
     #    push @prog_insts, "halt";
+   push @prog_insts, "j exit";
+   push @prog_insts, "\nexit:";
    push @prog_insts, "li a7, 93";
    push @prog_insts, "ecall";  
 
-    my $opname = $other_ops[$i];
     my $fname = write_program(\@prog_insts, $opname);
     print "Wrote $fname\n";
     $#prog_insts = -1;
@@ -453,10 +491,12 @@ sub gen_prog_per_inst() {
 sub write_program() {
   my ($i_ref, $filename) = @_;
   my @array = @$i_ref;
-  $filename = $oprefix.$filename.".asm";
+  $filename = $oprefix.$filename.".s";
+  print TL "$filename\n";
   open (F1, ">$filename");
-  print F1 "// seed $seed\n";
-  print F1 "_start :\n";      # Vis : Required
+  print F1 "# seed $seed\n";
+  print F1 ".global _start\n";     # Vis : Required          
+  print F1 "_start:\n";      # Vis : Required
   my $i = 1;
   my $j = 0;
   foreach my $a (@array) {
@@ -470,19 +510,19 @@ sub write_program() {
     if ( ($next_a =~ /^ld/) || ($next_a =~ /stu/) || ($next_a =~ /^st/) ) {
       # PC-align mem instructions
       if ( ($i %2 ) == 0) {
-        print F1 "nop // to align meminst icount ".($i-1)."\n";
+        print F1 "nop # to align meminst icount ".($i-1)."\n";
         $i++;
       }
     }
     if ($a =~ /^b/) {
       # align the branches
       if ( ($i %2 ) != 0) {
-        print F1 "nop // to align branch icount ".($i-1)."\n";
+        print F1 "nop # to align branch icount ".($i-1)."\n";
         $i++;
       }
     }
 
-    print F1 "$a // icount ".($i-1)."\n";
+    print F1 "$a # icount ".($i-1)."\n";
     $i++; $j++;
   }
   close F1;
@@ -491,9 +531,11 @@ sub write_program() {
 sub write_program_no_align() {
     my ($i_ref, $filename) = @_;
     my @array = @$i_ref;
-    $filename = $oprefix.$filename.".asm";
+    $filename = $oprefix.$filename.".s";
+    print TL "$filename\n";
     open (F1, ">$filename");
-    print F1 "_start :\n";                # Vis : Required
+    print F1 ".global _start\n";          # Vis : Required
+    print F1 "_start:\n";                # Vis : Required
     my $i = 1;
     my $j = 0;
     foreach my $a (@array) {
@@ -504,9 +546,11 @@ sub write_program_no_align() {
             $next_a = "nop";
         }
 
-        print F1 "$a // icount ".($i-1)."\n";
+        print F1 "$a # icount ".($i-1)."\n";
         $i++; $j++;
    }
+  print F1 "j exit\n";
+  print F1 "\nexit:\n";
   print F1 "li a7, 93 \n";
   print F1 "ecall\n";
 
@@ -641,6 +685,56 @@ sub gen_one_op_inst() {
 }
 
 
+
+
+ ########################################################################
+  sub gen_simple_cond_branch_new() {
+   my ($opname,$n_insts) = @_;
+   my @insts;
+   for (my $n = 0; $n < $n_insts; $n++) { 
+      my $imm = &my_get_random(3, 0);
+      my $reg_num1 = &my_get_random(5, 0);
+      my $reg_num2 = &my_get_random(5, 0);
+
+      if ( ($imm %4 ) != 0) {      # Vis : changing %2 to %4
+        $imm = $imm - ($imm%4);
+      }
+      push @insts, "$opname x$reg_num1, x$reg_num2, label_$n";
+        for (my $i = 0; $i < ($imm+2); $i++) {    # Vis : Changing imm/2 to imm
+          push @insts, "nop";
+        }
+	push @insts, "label_$n : nop "
+    }
+    return @insts;
+  }
+ ########################################################################
+
+ ########################################################################
+  sub gen_jalr() {
+   my @insts;
+   for (my $n = 0; $n < 16; $n++) {
+      my $imm = &my_get_random(3, 0);
+      my $reg_num1 = &my_get_random(5, 0);
+      my $reg_num2 = &my_get_random(5, 0);
+
+      if ( ($imm %4 ) != 0) {      # Vis : changing %2 to %4
+        $imm = $imm - ($imm%4);
+      }
+        push @insts, "jalr x$reg_num1, x$reg_num2, 0";
+    }
+    return @insts;
+  }
+ ########################################################################
+
+
+
+
+
+
+
+
+
+
 sub gen_simple_cond_branch() {
   my ($op, $n) = @_;
   my $i;
@@ -649,7 +743,8 @@ sub gen_simple_cond_branch() {
   
   @inst_list = &zero_some_regs(2);
   for ($i = 0; $i < $n; $i++) {
-    my $rs = &my_get_random(5, 0);   # Vis : 32 regs , so 5
+    my $rs1 = &my_get_random(5, 0);   # Vis : 32 regs , so 5
+    my $rs2 = &my_get_random(5, 0);
     my $imm = &my_get_random(4, 0);  
     # tests only 4-bit range and only +ve immediates
     # the * 4 is to make sure branches jump in multiples of 4
@@ -658,7 +753,7 @@ sub gen_simple_cond_branch() {
     if ( ($imm % 4) != 0) {
       $imm = $imm + 2;
     }
-    my $inst = "$op x$rs, $imm";
+    my $inst = "$op x$rs1, x$rs2, $imm";    # Vis : changing format
     push @inst_list, $inst;
     for (my $j = 0; $j < $imm; $j++) {
       if ($n == 1) {
@@ -720,7 +815,7 @@ sub gen_store() {
   #    # stu
   #    push @insts, "stu x$reg_num_dest, x$reg_num_src, $imm";
   #  }
-  push @insts, "@store_inst[int(rand(2))] x$reg_num_dest, $imm(x$reg_num_src)";  # Vis : replacing st with one among {sb, sw, sh}
+  push @insts, "sw x$reg_num_dest, $imm(x$reg_num_src)";  # Vis : replacing st with one among {sb, sw, sh}
   return @insts;
 }
 
@@ -729,9 +824,39 @@ sub gen_mem_safe_add_inst() {
   my @insts;
   my $imm = &my_get_random(4, 1);
   $imm = $imm*2;
-  push @insts, "addi x$reg_num, x$reg_num, $imm   // change base addr";
+  push @insts, "addi x$reg_num, x$reg_num, $imm   # change base addr";
   return @insts;
 }
+########################################################################
+sub gen_jump_new() {
+  my ($opname,$n_insts) = @_;
+  my @insts;
+  for (my $n = 0; $n < $n_insts; $n++) {
+
+    my $imm = &my_get_random(5, 0);
+    my $reg_num = &my_get_random(5, 0);
+    if ( ($imm %4 ) != 0) {      # Vis : changing %2 to %4
+      $imm = $imm - ($imm%4);
+    }
+    if($opname==0){
+    push @insts, "@other_ops[$opname] x$reg_num, label_$n";
+      for (my $i = 0; $i < ($imm+2); $i++) {    # Vis : Changing imm/2 to imm
+        push @insts, "nop";
+      }
+      push @insts, "label_$n : nop"
+    }
+    else{
+    push @insts, "@other_ops[$opname] x$reg_num, $imm";
+      for (my $i = 0; $i < ($imm+2); $i++) {    # Vis : Changing imm/2 to imm
+        push @insts, "nop";
+      }
+      push @insts, "nop"
+    }
+  }
+  return @insts;
+}
+########################################################################
+
 #Jump instruction tests
 sub gen_jump() {
   my ($n_insts, $x) = @_;
@@ -740,29 +865,31 @@ sub gen_jump() {
   SWITCH: {
       if ( ($x == 0) || ($x == 1) ) {
         my $imm = &my_get_random(5, 0); # only 5-bits of displacement used
-        if ( ($imm %2 ) != 0) {
-          $imm += 1;
+        if ( ($imm %4 ) != 0) {      # Vis : changing %2 to %4
+          $imm = $imm - ($imm%4);
         }
+	
         if ($x == 0) {
-          push @insts2, "j $imm";
+          push @insts2, "jal x0, $imm"; # Vis : changing j to jal
         } else {
-          push @insts2, "jal $imm";
+          push @insts2, "jal x0, $imm";
         }
         if ($imm > 0) {
-          for (my $i = 0; $i < (($imm/2)); $i++) {
+          for (my $i = 0; $i < (($imm)); $i++) {    # Vis : Changing imm/2 to imm
             push @insts2, "nop";
           }
         }
+	#push @insts2, "nop";
         last SWITCH;
       }
       ;
       if ( ($x == 2) || ($x == 3) ) {
         my $imm = &my_get_random(5, 0); # only 5-bits of displacement used
-        if ( ($imm %2 ) != 0) {
-          $imm += 1;
+        if ( ($imm %4 ) != 0) {
+          $imm  = $imm - ($imm%4);
         }
-        push @insts2, "jal 0";
-        push @insts2, "addi r0, r7, 0";
+        push @insts2, "jal x0, 0";
+        push @insts2, "addi x0, x7, 0";
         $exclude_dest_regs{0} = 1;
         my $n_filler_insts = &my_get_random(3, 0);
         my @insts3;
@@ -781,12 +908,12 @@ sub gen_jump() {
         $#insts3 = -1;
 
         if ($x == 0) {
-          push @insts2, "jr x0, $imm";
+          push @insts2, "jalr x0, x1, $imm";
         } else {
-          push @insts2, "jalr x0, $imm";
+          push @insts2, "jalr x0, x1, $imm";
         }
         if ($imm > 0) {
-          for (my $i = 0; $i < ($imm/2); $i++) {
+          for (my $i = 0; $i < ($imm); $i++) {
             push @insts2, "nop";
           }
         }
@@ -812,7 +939,7 @@ sub gen_mem_tests_old() {
           push @insts, "add x$reg_num_dest, x$reg_num_src, $imm"; 
       }
       if (int(rand(2) ) == 0) {
-         push @insts, "@store_inst[int(rand(2))] x$reg_num_dest, $imm(x$reg_num_src)";  # Vis : replacing st with one among {sb, sw, sh}
+         push @insts, "sw x$reg_num_dest, $imm(x$reg_num_src)";  # Vis : replacing st with one among {sb, sw, sh}
        } else {
          push @insts, "add x$reg_num_dest, x$reg_num_src, $imm";
        }                                            
@@ -840,9 +967,9 @@ sub gen_mem_test2()     {
    my $reg_num_1 = int(rand(2));
    my $reg_num_2 = 2+int(rand(2));
    my $j = 0;
-
+   push @insts, "addi x$reg_num_2, x$reg_num_2, 0";
    for ($j = 0; $j < 5 + rand(10); $j++) {
-       push @insts, "@store_inst[int(rand(2))] x$reg_num_2, 2(x$reg_num_1)";  # Vis : replacing st with one among {sb, sw, sh}
+       push @insts, "sw x$reg_num_2, 2(x$reg_num_1)";  # Vis : replacing st with one among {sb, sw, sh}
        push @insts, "addi x$reg_num_1, x$reg_num_1, 1";
    }
    return @insts;
@@ -864,9 +991,9 @@ sub gen_mem_test3()     {
    push @insts, "addi x$reg_num_3, x$reg_num_3, 0x02";  # Vis : replacing lbi with addi
    push @insts, "addi x$reg_num_4, x$reg_num_4, 0x04";  # Vis : replacing lbi with addi
    for ($j = 0; $j < 5 + rand(10); $j++) {
-      push @insts, "stu x$reg_num_2, x$reg_num_1, 2";
-      push @insts, "stu x$reg_num_3, x$reg_num_1, 2";
-      push @insts, "stu x$reg_num_4, x$reg_num_1, 2"; 
+      push @insts, "sw x$reg_num_2, 2(x$reg_num_1)";
+      push @insts, "sw x$reg_num_3, 2(x$reg_num_1)";
+      push @insts, "sw x$reg_num_4, 2(x$reg_num_1)"; 
    }
    return @insts;
 }
@@ -875,12 +1002,12 @@ sub gen_mem_test3()     {
 #Fill the entire cache.
 sub gen_mem_test4()     {
    my @insts;
-   my $reg_num_1 = int(rand(2));
+   my $reg_num_1 = int(rand(2))+1;
    my $reg_num_2 = 2+int(rand(2));
    my $reg_num_3 = 4+int(rand(1));
    my $reg_num_4 = 5+int(rand(1)); 
    my $j = 0;
-   my $tag =  7;
+   my $tag =  0;
    my $index  = 0;
    my $offset = 0;
 
@@ -901,7 +1028,7 @@ sub gen_mem_test5()     {
     my $reg_num_2 = 2+int(rand(2));
     my $j = 0;
 
-    my $tag    = 11;
+    my $tag    = 0;
     my $index  = 5;
     my $offset = 4;
 
@@ -930,11 +1057,11 @@ sub gen_mem_test6()     {
    my $reg_num_1 = int(rand(2));
    my $reg_num_2 = 2+int(rand(2));
    my $j = 0;
-   my $tag =  7;
+   my $tag =  0;
    my $index  = 0;
    my $offset = 0;
 
-   for ($tag = 7; $tag <9; $tag ++)     {
+   for ($tag = 0; $tag <1; $tag ++)     {
         for ($index=0;$index < 256;$index++) {
            my $address = sprintf ("%x", $tag<<11|$index<<3|$offset);
            push @insts, "addi x$reg_num_1, x$reg_num_1, 0x$address";      # Vis : replacing lbi with addi
@@ -942,7 +1069,7 @@ sub gen_mem_test6()     {
            push  @insts, "@load_inst[int(rand(4))] x$reg_num_2, 0(x$reg_num_1)";  # Vis : replacing ld with one among {lw, lh, lb, lbu, lhu}
        }
    }
-   $tag = 9; $index =0;
+   $tag = 0; $index =0;
    my $address = $tag<<11|$index<<3|$offset;
    push @insts, "addi x$reg_num_1, x$reg_num_1, $address";       # Vis : replacing lbi with addi
    push @insts, "addi x$reg_num_2, x$reg_num_2, 20";             # Vis : replacing lbi with addi
@@ -958,7 +1085,7 @@ sub gen_mem_test7()     {
     my $reg_num_2 = 2+int(rand(2));
     my $j = 0;
 
-    my $tag    = 7;
+    my $tag    = 0;
     my $index  = 12;
     my $offset = 6;
 
@@ -980,13 +1107,14 @@ sub gen_mem_test8()      {
     my $reg_num_3 = 4+int(rand(1));
     my $j = 0;
 
-    my $tag    = 7;
+    my $tag    = 0;
     my $index  = 2;
     my $offset = 0; 
     my $address = $tag<<11|$index<<3|$offset;
 
     push @insts, "addi x$reg_num_1, x$reg_num_1, $address";    # Vis : replacing lbi with addi
     push @insts, "addi x$reg_num_2, x$reg_num_2, 40";          # Vis : replacing lbi with addi
+    push @insts, "addi x$reg_num_3, x$reg_num_3, 0";          # Vis : replacing lbi with addi
     push @insts, "sw x$reg_num_2, 0(x$reg_num_1)";             # Vis : replacing st with sw
     push @insts, "@load_inst[int(rand(4))] x$reg_num_3, 0(x$reg_num_1)";  # Vis : replacing ld with one among {lw, lh, lb, lbu, lhu}
     return @insts;
