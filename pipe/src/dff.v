@@ -3,6 +3,7 @@
 /* $Rev: 45 $ */
 // D-flipflop
 `default_nettype none
+`timescale 1ps/1ps
 module dff (q, d, clk, rst);
 
     output wire        q;
