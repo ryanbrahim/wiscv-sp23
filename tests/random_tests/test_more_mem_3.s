@@ -21,6 +21,15 @@ sw x5, 2(x0) # icount 17
 sw x3, 2(x0) # icount 18
 sw x4, 2(x0) # icount 19
 sw x5, 2(x0) # icount 20
+sw x3, 2(x0) # icount 21
+sw x4, 2(x0) # icount 22
+sw x5, 2(x0) # icount 23
+sw x3, 2(x0) # icount 24
+sw x4, 2(x0) # icount 25
+sw x5, 2(x0) # icount 26
+sw x3, 2(x0) # icount 27
+sw x4, 2(x0) # icount 28
+sw x5, 2(x0) # icount 29
 j exit
 
 exit:

@@ -1,39 +1,39 @@
-# seed 1676715742
+# seed 1678683149
 .global _start
 _start:
-jal x25, 24 # icount 0
-nop # icount 1
-nop # icount 2
-nop # icount 3
-nop # icount 4
-nop # icount 5
-nop # icount 6
-nop # icount 7
-nop # icount 8
-nop # icount 9
-nop # icount 10
-nop # icount 11
-nop # icount 12
-nop # icount 13
-nop # icount 14
-nop # icount 15
-nop # icount 16
-nop # icount 17
-nop # icount 18
-nop # icount 19
-nop # icount 20
-nop # icount 21
-nop # icount 22
-nop # icount 23
-nop # icount 24
-nop # icount 25
-nop # icount 26
-jal x5, 28 # icount 27
-nop # icount 28
-nop # icount 29
-nop # icount 30
-nop # icount 31
-nop # icount 32
+addi x0, x0, 213 # icount 0
+addi x1, x1, 75 # icount 1
+addi x2, x2, 32 # icount 2
+addi x3, x3, 171 # icount 3
+addi x4, x4, 182 # icount 4
+addi x5, x5, 17 # icount 5
+addi x6, x6, 225 # icount 6
+addi x7, x7, 219 # icount 7
+addi x8, x8, 104 # icount 8
+addi x9, x9, 197 # icount 9
+addi x10, x10, 128 # icount 10
+addi x11, x11, 135 # icount 11
+addi x12, x12, 140 # icount 12
+addi x13, x13, 218 # icount 13
+addi x14, x14, 164 # icount 14
+addi x15, x15, 177 # icount 15
+addi x16, x16, 72 # icount 16
+addi x17, x17, 38 # icount 17
+addi x18, x18, 237 # icount 18
+addi x19, x19, 16 # icount 19
+addi x20, x20, 11 # icount 20
+addi x21, x21, 193 # icount 21
+addi x22, x22, 235 # icount 22
+addi x23, x23, 86 # icount 23
+addi x24, x24, 139 # icount 24
+addi x25, x25, 184 # icount 25
+addi x26, x26, 88 # icount 26
+addi x27, x27, 176 # icount 27
+addi x28, x28, 166 # icount 28
+addi x29, x29, 186 # icount 29
+addi x30, x30, 182 # icount 30
+addi x31, x31, 230 # icount 31
+jal x20, label_0 # icount 32
 nop # icount 33
 nop # icount 34
 nop # icount 35
@@ -48,21 +48,21 @@ nop # icount 43
 nop # icount 44
 nop # icount 45
 nop # icount 46
-nop # icount 47
-nop # icount 48
+label_0 : nop # icount 47
+jal x22, label_1 # icount 48
 nop # icount 49
 nop # icount 50
 nop # icount 51
 nop # icount 52
 nop # icount 53
 nop # icount 54
-nop # icount 55
-nop # icount 56
+label_1 : nop # icount 55
+jal x0, label_2 # icount 56
 nop # icount 57
-jal x5, 0 # icount 58
-nop # icount 59
-nop # icount 60
-jal x9, 12 # icount 61
+nop # icount 58
+label_2 : nop # icount 59
+jal x1, label_3 # icount 60
+nop # icount 61
 nop # icount 62
 nop # icount 63
 nop # icount 64
@@ -77,11 +77,11 @@ nop # icount 72
 nop # icount 73
 nop # icount 74
 nop # icount 75
-jal x19, 24 # icount 76
+nop # icount 76
 nop # icount 77
 nop # icount 78
-nop # icount 79
-nop # icount 80
+label_3 : nop # icount 79
+jal x19, label_4 # icount 80
 nop # icount 81
 nop # icount 82
 nop # icount 83
@@ -104,16 +104,16 @@ nop # icount 99
 nop # icount 100
 nop # icount 101
 nop # icount 102
-jal x19, 4 # icount 103
+nop # icount 103
 nop # icount 104
 nop # icount 105
 nop # icount 106
 nop # icount 107
 nop # icount 108
 nop # icount 109
-jal x11, 20 # icount 110
-nop # icount 111
-nop # icount 112
+nop # icount 110
+label_4 : nop # icount 111
+jal x20, label_5 # icount 112
 nop # icount 113
 nop # icount 114
 nop # icount 115
@@ -134,10 +134,10 @@ nop # icount 129
 nop # icount 130
 nop # icount 131
 nop # icount 132
-jal x20, 24 # icount 133
+nop # icount 133
 nop # icount 134
-nop # icount 135
-nop # icount 136
+label_5 : nop # icount 135
+jal x0, label_6 # icount 136
 nop # icount 137
 nop # icount 138
 nop # icount 139
@@ -161,26 +161,26 @@ nop # icount 156
 nop # icount 157
 nop # icount 158
 nop # icount 159
-jal x15, 16 # icount 160
+nop # icount 160
 nop # icount 161
 nop # icount 162
 nop # icount 163
 nop # icount 164
 nop # icount 165
 nop # icount 166
-nop # icount 167
-nop # icount 168
+label_6 : nop # icount 167
+jal x21, label_7 # icount 168
 nop # icount 169
 nop # icount 170
-nop # icount 171
-nop # icount 172
+label_7 : nop # icount 171
+jal x7, label_8 # icount 172
 nop # icount 173
 nop # icount 174
 nop # icount 175
 nop # icount 176
 nop # icount 177
 nop # icount 178
-jal x21, 28 # icount 179
+nop # icount 179
 nop # icount 180
 nop # icount 181
 nop # icount 182
@@ -188,8 +188,8 @@ nop # icount 183
 nop # icount 184
 nop # icount 185
 nop # icount 186
-nop # icount 187
-nop # icount 188
+label_8 : nop # icount 187
+jal x11, label_9 # icount 188
 nop # icount 189
 nop # icount 190
 nop # icount 191
@@ -208,10 +208,10 @@ nop # icount 203
 nop # icount 204
 nop # icount 205
 nop # icount 206
-nop # icount 207
-nop # icount 208
+label_9 : nop # icount 207
+jal x21, label_10 # icount 208
 nop # icount 209
-jal x13, 24 # icount 210
+nop # icount 210
 nop # icount 211
 nop # icount 212
 nop # icount 213
@@ -220,25 +220,25 @@ nop # icount 215
 nop # icount 216
 nop # icount 217
 nop # icount 218
-nop # icount 219
-nop # icount 220
+label_10 : nop # icount 219
+jal x7, label_11 # icount 220
 nop # icount 221
 nop # icount 222
 nop # icount 223
 nop # icount 224
 nop # icount 225
 nop # icount 226
-nop # icount 227
-nop # icount 228
+label_11 : nop # icount 227
+jal x19, label_12 # icount 228
 nop # icount 229
 nop # icount 230
 nop # icount 231
 nop # icount 232
 nop # icount 233
 nop # icount 234
-nop # icount 235
-nop # icount 236
-jal x19, 20 # icount 237
+label_12 : nop # icount 235
+jal x2, label_13 # icount 236
+nop # icount 237
 nop # icount 238
 nop # icount 239
 nop # icount 240
@@ -261,15 +261,15 @@ nop # icount 256
 nop # icount 257
 nop # icount 258
 nop # icount 259
-jal x12, 4 # icount 260
+nop # icount 260
 nop # icount 261
 nop # icount 262
 nop # icount 263
 nop # icount 264
 nop # icount 265
 nop # icount 266
-jal x28, 20 # icount 267
-nop # icount 268
+label_13 : nop # icount 267
+jal x2, label_14 # icount 268
 nop # icount 269
 nop # icount 270
 nop # icount 271
@@ -288,53 +288,17 @@ nop # icount 283
 nop # icount 284
 nop # icount 285
 nop # icount 286
-nop # icount 287
-nop # icount 288
+label_14 : nop # icount 287
+jal x20, label_15 # icount 288
 nop # icount 289
-jal x24, 8 # icount 290
+nop # icount 290
 nop # icount 291
 nop # icount 292
 nop # icount 293
 nop # icount 294
-nop # icount 295
-nop # icount 296
-nop # icount 297
-nop # icount 298
-nop # icount 299
-nop # icount 300
-jal x6, 28 # icount 301
-nop # icount 302
-nop # icount 303
-nop # icount 304
-nop # icount 305
-nop # icount 306
-nop # icount 307
-nop # icount 308
-nop # icount 309
-nop # icount 310
-nop # icount 311
-nop # icount 312
-nop # icount 313
-nop # icount 314
-nop # icount 315
-nop # icount 316
-nop # icount 317
-nop # icount 318
-nop # icount 319
-nop # icount 320
-nop # icount 321
-nop # icount 322
-nop # icount 323
-nop # icount 324
-nop # icount 325
-nop # icount 326
-nop # icount 327
-nop # icount 328
-nop # icount 329
-nop # icount 330
-nop # icount 331
-j exit # icount 332
+label_15 : nop # icount 295
+j exit # icount 296
 
-exit: # icount 333
-li a7, 93 # icount 334
-ecall # icount 335
+exit: # icount 297
+li a7, 93 # icount 298
+ecall # icount 299
