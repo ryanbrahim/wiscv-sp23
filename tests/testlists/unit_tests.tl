@@ -11,10 +11,6 @@ bltu
 bne
 jalr
 jal
-lb
-lbu
-lh
-lhu
 lui
 lw
 ori
