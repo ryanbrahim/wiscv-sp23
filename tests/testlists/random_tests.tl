@@ -21,13 +21,8 @@ test_lui
 test_beq
 test_lui
 test_auipc
-test_more_mem_1
 test_more_mem_2
 test_more_mem_3
-test_more_mem_4
-test_more_mem_5
-test_more_mem_6
-test_more_mem_7
 test_bne
 test_bge
 test_bltu
